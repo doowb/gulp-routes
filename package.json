@@ -26,8 +26,13 @@
     "test": "mocha -R spec"
   },
   "devDependencies": {
+    "en-route": "^0.3.3",
     "mocha": "*",
     "should": "*"
   },
-  "keywords": []
+  "keywords": [],
+  "dependencies": {
+    "gulp-util": "^3.0.1",
+    "through2": "^0.6.3"
+  }
 }
