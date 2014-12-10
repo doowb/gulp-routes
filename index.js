@@ -19,13 +19,13 @@ var gutil = require('gulp-util');
  * var routes = gulpRoutes(router);
  * ```
  *
- * @name  routesPlugin
+ * @name  gulpRoutes
  * @param  {Object}   `router` Instance of an [en-route] router
  * @return {Function} New function for creating a router stream.
  * @api public
  */
 
-module.exports = function routesPlugin(router) {
+module.exports = function gulpRoutes(router) {
   router = router || (this && this.router);
   if (!router) {
     throw new gutil.PluginError('gulp-routes', new Error('Expected a valid router object.'));

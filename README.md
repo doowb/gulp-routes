@@ -22,7 +22,7 @@ var gulpRoutes = require('gulp-routes');
 ```
 
 ## API
-### [.routesPlugin](index.js#L28)
+### [.gulpRoutes](index.js#L28)
 
 Create a routes plugin that runs middleware defined on a router.
 
