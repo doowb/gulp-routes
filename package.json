@@ -1,0 +1,33 @@
+{
+  "name": "gulp-routes",
+  "description": "Add middleware to run for specified routes in your gulp pipeline.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/assemble/gulp-routes",
+  "author": {
+    "name": "Brian Woodward",
+    "url": "https://github.com/doowb"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/assemble/gulp-routes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/assemble/gulp-routes/issues"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/assemble/gulp-routes/blob/master/LICENSE-MIT"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "keywords": []
+}
