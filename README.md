@@ -8,19 +8,30 @@
 npm i gulp-routes --save
 ```
 
-## Running tests
-Install dev dependencies.
-
-```bash
-npm i -d && npm test
-```
-
-
 ## Usage
 
 ```js
 var gulpRoutes = require('gulp-routes');
+var Router = require('en-route').Router;
+var router = new Router();
+
+// define middleware 
+router.all(/\.hbs/, function (file, next) {
+  var str = file.contents.toString();
+  // do anything to `file` that can be done
+  // in a gulp plugin
+  file.contents = new Buffer(str);
+  next();
+});
+
+// pass the router tp `gulpRoutes`
+var routes = gulpRoutes(router);
+
+gulp.src('*.hbs')
+  .pipe(routes())
+  .pipe(gulp.dest('_gh_pages/'));
 ```
+
 
 ## API
 ### [gulpRoutes](./index.js#L32)
@@ -46,6 +57,14 @@ Create a router stream to run middleware for the specified method.
 gulp.src('*.hbs')
   .pipe(routes())
   .pipe(gulp.dest('_gh_pages/'));
+```
+
+
+## Running tests
+Install dev dependencies.
+
+```bash
+npm i -d && npm test
 ```
 
 
