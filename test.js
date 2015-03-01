@@ -191,12 +191,9 @@ describe('gulp-routes', function() {
   });
 
   it('should throw an error when a router is\'t provided.', function (done) {
-    try {
-      var routes = gulpRoutes();
-      return done(new Error('Expected an error to be thrown'));
-    } catch (err) {
-      if (!err) return done(new Error('Expected an error to be thrown'));
-      done();
-    }
+    (function () {
+      gulpRoutes()
+    }).should.throw('Expected a valid router object.');
+    done();
   });
 });
