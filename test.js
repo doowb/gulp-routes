@@ -17,14 +17,14 @@ describe('gulp-routes', function() {
   it('should route files', function(done) {
 
     var fakeFile = new File({
-      cwd: 'src/templates',
-      base: 'src/templates',
-      path: 'src/templates/alert.hbs',
-      contents: new Buffer('---\ntitle: sup\n---\n{{upper title}}')
+      cwd: 'fixtures',
+      base: 'fixtures',
+      path: 'fixtures/index.js',
+      contents: new Buffer('var foo = function(){};')
     });
 
     var router = new Router();
-    router.all(/\.hbs/, function (file, next) {
+    router.all(/\.js/, function (file, next) {
       file.data = file.data || {};
       file.data.middleware = true;
       next();
@@ -44,15 +44,15 @@ describe('gulp-routes', function() {
 
   it('should route files with a router from `this`', function (done) {
     var fakeFile = new File({
-      cwd: 'src/templates',
-      base: 'src/templates',
-      path: 'src/templates/alert.hbs',
-      contents: new Buffer('---\ntitle: sup\n---\n{{upper title}}')
+      cwd: 'fixtures',
+      base: 'fixtures',
+      path: 'fixtures/index.js',
+      contents: new Buffer('var foo = function(){};')
     });
 
     var app = {};
     app.router = new Router();
-    app.router.all(/\.hbs/, function (file, next) {
+    app.router.all(/\.js/, function (file, next) {
       file.data = file.data || {};
       file.data.middleware = true;
       next();
@@ -72,16 +72,16 @@ describe('gulp-routes', function() {
 
   it('should route files to different routes', function (done) {
     var file1 = new File({
-      cwd: 'src/templates',
-      base: 'src/templates',
-      path: 'src/templates/one.hbs',
+      cwd: 'fixtures',
+      base: 'fixtures',
+      path: 'fixtures/one.js',
       contents: new Buffer('one')
     });
 
     var file2 = new File({
-      cwd: 'src/templates',
-      base: 'src/templates',
-      path: 'src/templates/two.hbs',
+      cwd: 'fixtures',
+      base: 'fixtures',
+      path: 'fixtures/two.js',
       contents: new Buffer('two')
     });
 
@@ -125,14 +125,14 @@ describe('gulp-routes', function() {
 
   it('should route on multiple methods', function (done) {
     var fakeFile = new File({
-      cwd: 'src/templates',
-      base: 'src/templates',
-      path: 'src/templates/one.hbs',
+      cwd: 'fixtures',
+      base: 'fixtures',
+      path: 'fixtures/one.js',
       contents: new Buffer('one')
     });
 
     var router = new Router({
-      methods: ['before', 'after']
+      methods: ['before', 'after', 'whatever']
     });
 
     router.use(function (file, next) {
@@ -140,19 +140,33 @@ describe('gulp-routes', function() {
       next();
     });
 
-    router.before(/\./, function (file, next) {
+    router.before(/./, function (file, next) {
       file.data.before = true;
       next();
     });
 
-    router.after(/\./, function (file, next) {
+    router.whatever(/./, function (file, next) {
+      file.data.whatever = true;
+      next();
+    });
+
+    router.after(/./, function (file, next) {
       file.data.after = true;
       next();
     });
 
     var routes = gulpRoutes(router);
+    var whateverStream = routes('whatever');
     var beforeStream = routes('before');
     var afterStream = routes('after');
+
+    whateverStream
+      .pipe(through.obj(function (file, enc, cb) {
+        file.data.whatever.should.be.true;
+        file.data.should.not.have.property('after');
+        this.push(file);
+        cb();
+      }))
 
     beforeStream
       .pipe(through.obj(function (file, enc, cb) {
@@ -161,10 +175,12 @@ describe('gulp-routes', function() {
         this.push(file);
         cb();
       }))
+      .pipe(whateverStream)
       .pipe(afterStream);
 
     afterStream.on('data', function (file) {
       file.data.before.should.be.true;
+      file.data.whatever.should.be.true;
       file.data.after.should.be.true;
     });
 
@@ -183,6 +199,4 @@ describe('gulp-routes', function() {
       done();
     }
   });
-
-
 });
