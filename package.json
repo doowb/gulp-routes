@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "en-route": "^0.4.0",
+    "helper-related": "^0.1.0",
     "mocha": "*"
   }
 }
