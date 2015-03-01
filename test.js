@@ -1,9 +1,10 @@
-/**
- * Assemble <http://assemble.io>
+/*!
+ * gulp-routes <https://github.com/assemble/gulp-routes>
  *
- * Copyright (c) 2014 Jon Schlinkert, Brian Woodward, contributors
- * Licensed under the MIT License (MIT).
+ * Copyright (c) 2014-2015, Brian Woodward.
+ * Licensed under the MIT License.
  */
+
 'use strict';
 
 var should = require('should');

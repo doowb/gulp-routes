@@ -16,23 +16,26 @@
   },
   "license": {
     "type": "MIT",
-    "url": "https://github.com/assemble/gulp-routes/blob/master/LICENSE-MIT"
+    "url": "https://github.com/assemble/gulp-routes/blob/master/LICENSE"
   },
+  "files": [
+    "index.js"
+  ],
   "main": "index.js",
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha"
+  },
+  "dependencies": {
+    "gulp-util": "^3.0.4",
+    "should": "^5.0.1",
+    "through2": "^0.6.3"
   },
   "devDependencies": {
-    "en-route": "^0.3.3",
+    "en-route": "^0.4.0",
     "mocha": "*",
-    "should": "*"
-  },
-  "keywords": [],
-  "dependencies": {
-    "gulp-util": "^3.0.1",
-    "through2": "^0.6.3"
+    "should": "^5.0.1"
   }
 }

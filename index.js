@@ -1,8 +1,8 @@
 /*!
  * gulp-routes <https://github.com/assemble/gulp-routes>
  *
- * Copyright (c) 2014 Brian Woodward, contributors.
- * Licensed under the MIT license.
+ * Copyright (c) 2014-2015, Brian Woodward.
+ * Licensed under the MIT License.
  */
 
 'use strict';
@@ -11,21 +11,25 @@ var through = require('through2');
 var gutil = require('gulp-util');
 
 /**
- * Create a routes plugin that runs middleware defined on a router.
+ * Expose `gulpRoutes` plugin.
+ */
+
+module.exports = gulpRoutes;
+
+/**
+ * Returns a plugin function for running middleware defined on a router.
  *
  * ```js
- * var gulpRoutes = require('gulp-routes');
  * var router = require('en-route');
- * var routes = gulpRoutes(router);
+ * var routes = require('gulp-routes')(router);
  * ```
  *
- * @name  gulpRoutes
- * @param  {Object}   `router` Instance of an [en-route] router
+ * @param  {Object} `router` Instance of an [en-route] router.
  * @return {Function} New function for creating a router stream.
  * @api public
  */
 
-module.exports = function gulpRoutes(router) {
+function gulpRoutes(router) {
   router = router || (this && this.router);
   if (!router) {
     throw new gutil.PluginError('gulp-routes', new Error('Expected a valid router object.'));
@@ -46,14 +50,20 @@ module.exports = function gulpRoutes(router) {
    * @api public
    */
 
-  return function routes (method) {
+  return function routes(method) {
     method = method || 'all';
 
     return through.obj(function (file, encoding, cb) {
+      if (file.isNull() || !file.isBuffer()) {
+        this.push(file);
+        return cb();
+      }
+
       var stream = this;
       try {
         file.options = file.options || {};
         file.options.method = method;
+
         // run middleware
         router.handle(file, function (err) {
           if (err) {
@@ -64,9 +74,9 @@ module.exports = function gulpRoutes(router) {
             cb();
           }
         });
-      } catch (ex) {
-        stream.emit('error', new gutil.PluginError('gulp-routes - handle', ex));
-        cb();
+      } catch (err) {
+        stream.emit('error', new gutil.PluginError('gulp-routes - handle', err));
+        return cb();
       }
     });
   };
