@@ -1,38 +1,50 @@
 /*!
  * gulp-routes <https://github.com/assemble/gulp-routes>
  *
- * Copyright (c) 2014-2015, Brian Woodward.
- * Licensed under the MIT License.
+ * Copyright (c) 2014-2017, Brian Woodward.
+ * Released under the MIT License.
  */
 
 'use strict';
 
+var PluginError = require('plugin-error');
 var through = require('through2');
-var gutil = require('gulp-util');
 
 /**
- * Expose `gulpRoutes` plugin.
- */
-
-module.exports = gulpRoutes;
-
-/**
- * Returns a plugin function for running middleware defined on a router.
+ * The main export is a function that takes an instance of
+ * [en-route][] and returns a [gulp][] plugin function.
  *
  * ```js
- * var router = require('en-route');
- * var routes = require('gulp-routes')(router);
- * ```
+ * var routes = require('gulp-routes');
+ * var Router = require('en-route').Router;
+ * var router = new Router();
  *
- * @param  {Object} `router` Instance of an [en-route] router.
- * @return {Function} New function for creating a router stream.
+ * // define middleware
+ * router.all(/\.hbs/, function (file, next) {
+ *   var str = file.contents.toString();
+ *   // do anything to `file` that can be done
+ *   // in a gulp plugin
+ *   file.contents = new Buffer(str);
+ *   next();
+ * });
+ *
+ * // pass the router to `gulp-routes`
+ * var route = routes(router);
+ *
+ * gulp.src('*.hbs')
+ *   .pipe(route())
+ *   .pipe(gulp.dest('_gh_pages/'));
+ * ```
+ * @param {Object} `enRoute` Instance of [en-route][].
+ * @return {Function}
  * @api public
  */
 
-function gulpRoutes(router) {
-  router = router || (this && this.router);
-  if (!router) {
-    throw new gutil.PluginError('gulp-routes', new Error('Expected a valid router object.'));
+function routes(enRoute) {
+  enRoute = enRoute || (this && this.router);
+
+  if (!enRoute) {
+    throw error(new Error('expected an instance of en-route'));
   }
 
   /**
@@ -40,45 +52,59 @@ function gulpRoutes(router) {
    *
    * ```js
    * gulp.src('*.hbs')
-   *   .pipe(routes())
-   *   .pipe(gulp.dest('_gh_pages/'));
+   *   .pipe(route('before'))
+   *   .pipe(otherPlugin())
+   *   .pipe(route('after'))
+   *   .pipe(gulp.dest('dist/'));
    * ```
-   *
-   * @name  routes
-   * @param  {String} `method` Method to run middleware for.
-   * @return {Stream} Stream for piping files through
+   * @name route
+   * @param {String} `method` Method to run middleware.
+   * @return {Stream} Returns a stream for piping files through.
    * @api public
    */
 
-  return function routes(method) {
+  return function(method) {
     method = method || 'all';
 
-    return through.obj(function (file, encoding, cb) {
-      if (file.isNull() || !file.isBuffer()) {
-        this.push(file);
-        return cb();
+    return through.obj(function(file, enc, next) {
+      if (file.isNull()) {
+        next(null, file);
+        return;
       }
 
-      var stream = this;
-      try {
-        file.options = file.options || {};
-        file.options.method = method;
+      if (file.isStream()) {
+        this.emit('error', error('streaming is not supported'));
+        return;
+      }
 
-        // run middleware
-        router.handle(file, function (err) {
+      file.data = file.data || {};
+      file.options = file.options || {};
+      file.options.method = method;
+      var stream = this;
+
+      try {
+        enRoute.handle(file, function(err) {
           if (err) {
-            stream.emit('error', new gutil.PluginError('gulp-routes', err));
-            cb();
-          } else {
-            stream.push(file);
-            cb();
+            stream.emit('error', error(err));
+            return;
           }
+          next(null, file);
         });
       } catch (err) {
-        stream.emit('error', new gutil.PluginError('gulp-routes - handle', err));
-        return cb();
+        stream.emit('error', error(err));
+        next();
+        return;
       }
     });
   };
 };
 
+function error(err) {
+  return new PluginError('gulp-routes', err, {showStack: true});
+}
+
+/**
+ * Expose `routes`
+ */
+
+module.exports = routes;
