@@ -3,39 +3,59 @@
   "description": "Add middleware to run for specified routes in your gulp pipeline.",
   "version": "0.1.2",
   "homepage": "https://github.com/assemble/gulp-routes",
-  "author": {
-    "name": "Brian Woodward",
-    "url": "https://github.com/doowb"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/assemble/gulp-routes.git"
-  },
+  "author": "Brian Woodward (https://github.com/doowb)",
+  "contributors": [
+    "Brian Woodward (https://twitter.com/doowb)",
+    "Jon Schlinkert (http://twitter.com/jonschlinkert)"
+  ],
+  "repository": "assemble/gulp-routes",
   "bugs": {
     "url": "https://github.com/assemble/gulp-routes/issues"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/assemble/gulp-routes/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "files": [
     "index.js"
   ],
   "main": "index.js",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4"
   },
   "scripts": {
     "test": "mocha"
   },
   "dependencies": {
-    "gulp-util": "^3.0.4",
-    "should": "^5.0.1",
-    "through2": "^0.6.3"
+    "plugin-error": "^0.1.2",
+    "through2": "^2.0.3"
   },
   "devDependencies": {
-    "en-route": "^0.4.0",
-    "helper-related": "^0.1.0",
-    "mocha": "*"
+    "en-route": "^1.0.0",
+    "gulp-format-md": "^1.0.0",
+    "mocha": "^3.5.0",
+    "vinyl": "^2.1.0"
+  },
+  "keywords": [
+    "gulp",
+    "gulpplugin",
+    "routes"
+  ],
+  "verb": {
+    "toc": false,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ],
+    "lint": {
+      "reflinks": true
+    },
+    "related": {
+      "list": ["en-route", "base", "base-routes"]
+    },
+    "reflinks": [
+      "en-route",
+      "gulp"
+    ]
   }
 }
