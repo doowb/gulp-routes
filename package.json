@@ -1,7 +1,7 @@
 {
   "name": "gulp-routes",
   "description": "Add middleware to run for specified routes in your gulp pipeline.",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "homepage": "https://github.com/assemble/gulp-routes",
   "author": "Brian Woodward (https://github.com/doowb)",
   "contributors": [
